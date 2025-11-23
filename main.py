@@ -14,35 +14,42 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f'{bot.user} AI modunda online la! Her mesajı okuyup cevap verecek.')
+    print(f'{bot.user} AI modunda online la!')
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
 
+    # Komutların çalışması için
+    await bot.process_commands(message)
+
     try:
         headers = {
             "Authorization": f"Bearer {GROK_API_KEY}",
             "Content-Type": "application/json"
         }
+
         data = {
             "model": "grok-beta",
             "messages": [
-                {"role": "system", "content": "Sen eğlenceli, küfürlü bir Türk la adamısın. Kısa ve samimi cevap ver, sohbeti devam ettir."},
+                {"role": "system", "content": "Sen eğlenceli, küfürlü bir Türk adamsın. Kısa samimi cevap ver."},
                 {"role": "user", "content": message.content}
             ],
             "max_tokens": 150,
             "temperature": 0.8
         }
+
         response = requests.post(GROK_URL, headers=headers, json=data)
+
         if response.status_code == 200:
             result = response.json()
-            ai_reply = result['choices'][0]['message']['content']
+            ai_reply = result["choices"][0]["message"]["content"]
             await message.channel.send(f"{message.author.mention} {ai_reply}")
         else:
-            print(f"Hata: {response.status_code}")
-    except Exception as e:
-        print(f"AI hatası: {e}")
+            print("API Hatası:", response.status_code, response.text)
 
-bot.run(os.getenv('token'))
+    except Exception as e:
+        print("AI hatası:", e)
+
+bot.run(os.getenv('TOKEN'))
