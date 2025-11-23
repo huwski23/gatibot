@@ -45,4 +45,4 @@ async def on_message(message):
     except Exception as e:
         print(f"AI hatası: {e}")
 
-bot.run(os.getenv('MTQ0MjA1MDYwNDMwMTE1NjM3Mg.GX3r2q.iiLvPRERVNe8pj_BytFYbgYkhM9PO0VnDqwuTw'))
+bot.run(os.getenv('token'))
